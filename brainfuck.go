@@ -12,9 +12,7 @@ func brainfuckInterpreter(code, input string) string {
 	loopStack := []int{}
 
 	for codePtr < len(code) {
-		command := code[codePtr]
-
-		switch command {
+		switch code[codePtr] {
 		case '>':
 			dataPtr++
 		case '<':
@@ -29,17 +27,13 @@ func brainfuckInterpreter(code, input string) string {
 			if inputPtr < len(input) {
 				data[dataPtr] = input[inputPtr]
 				inputPtr++
-			} else {
-				data[dataPtr] = 0 // No more input; assume 0
 			}
 		case '[':
 			if data[dataPtr] == 0 {
-				openBrackets := 1
-				for openBrackets != 0 {
-					codePtr++
-					if code[codePtr] == '[' {
+				for openBrackets := 1; openBrackets > 0; codePtr++ {
+					if code[codePtr+1] == '[' {
 						openBrackets++
-					} else if code[codePtr] == ']' {
+					} else if code[codePtr+1] == ']' {
 						openBrackets--
 					}
 				}
@@ -53,7 +47,6 @@ func brainfuckInterpreter(code, input string) string {
 				loopStack = loopStack[:len(loopStack)-1]
 			}
 		}
-
 		codePtr++
 	}
 
@@ -64,14 +57,10 @@ func main() {
 	// Example Brainfuck code that outputs 'A'
 	bfCode := "++++++++[>++++++++<-]>+."
 	input := "" // No input in this example
-	output := brainfuckInterpreter(bfCode, input)
-
-	fmt.Println(output) // Should print 'A'
+	fmt.Println(brainfuckInterpreter(bfCode, input)) // Should print 'A'
 
 	// Run with custom Brainfuck code from command line argument
 	if len(os.Args) > 1 {
-		bfCode := os.Args[1]
-		output := brainfuckInterpreter(bfCode, input)
-		fmt.Println(output)
+		fmt.Println(brainfuckInterpreter(os.Args[1], input))
 	}
 }
